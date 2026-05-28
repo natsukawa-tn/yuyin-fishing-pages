@@ -526,6 +526,13 @@
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
 
+        function getLangFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const lang = params.get('lang');
+            if (lang && ['zh','en','ja'].includes(lang)) return lang;
+            return 'zh';
+        }
+
         function switchLang(lang) {
             document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
@@ -553,7 +560,15 @@
                 ja: '🎣 製品紹介'
             };
             document.getElementById('footerLink').textContent = links[lang];
+
+            // Sync URL without reload
+            const url = new URL(window.location);
+            url.searchParams.set('lang', lang);
+            window.history.replaceState({}, '', url);
         }
+
+        // Init from URL parameter
+        switchLang(getLangFromURL());
     </script>
 </body>
 </html>
