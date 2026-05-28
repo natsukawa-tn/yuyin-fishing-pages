@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="鱼隐·离线钓场 - 完全离线、体感操作的钓鱼收集游戏">
+    <title id="pageTitle">鱼隐 · 离线钓场 | natsukawa.tn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, 'Helvetica Neue', 'PingFang SC', 'Noto Sans SC', 'Hiragino Sans', sans-serif;
+            background: linear-gradient(180deg, #0b1a2e 0%, #1a3a5c 50%, #0d2137 100%);
+            color: #e0e8f0;
+            line-height: 1.7;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Language Switcher */
+        .lang-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 26, 46, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 0;
+        }
+        .lang-bar .container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .lang-btn {
+            padding: 6px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            background: transparent;
+            color: #8899aa;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-weight: 500;
+        }
+        .lang-btn.active {
+            background: rgba(64, 180, 255, 0.2);
+            border-color: #40b4ff;
+            color: #40b4ff;
+        }
+        .lang-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Language Content */
+        .lang-content {
+            display: none;
+        }
+        .lang-content.active {
+            display: block;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+        .hero .subtitle {
+            font-size: 16px;
+            color: #6a8aaa;
+            margin-top: 8px;
+        }
+        .hero .tagline {
+            font-size: 18px;
+            color: #40b4ff;
+            margin-top: 16px;
+            font-weight: 600;
+        }
+        .hero .badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 24px;
+            background: linear-gradient(135deg, #40b4ff, #2d7dd2);
+            border-radius: 25px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Section */
+        .section {
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .section:last-of-type {
+            border-bottom: none;
+        }
+        .section h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2 .emoji {
+            font-size: 26px;
+        }
+        .section p {
+            font-size: 15px;
+            color: #b0c4d8;
+            margin-bottom: 12px;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        .feature-card:active {
+            transform: scale(0.98);
+        }
+        .feature-card .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .feature-card h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .feature-card p {
+            font-size: 13px;
+            color: #8899aa;
+            margin-bottom: 0;
+        }
+
+        /* List */
+        .spec-list {
+            list-style: none;
+            padding: 0;
+        }
+        .spec-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 15px;
+            color: #b0c4d8;
+        }
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+        .spec-list .dot {
+            color: #40b4ff;
+            flex-shrink: 0;
+        }
+
+        /* Contact */
+        .contact-box {
+            background: linear-gradient(135deg, rgba(64, 180, 255, 0.08), rgba(45, 125, 210, 0.05));
+            border: 1px solid rgba(64, 180, 255, 0.15);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            margin-top: 16px;
+        }
+        .contact-box .email {
+            font-size: 18px;
+            color: #40b4ff;
+            font-weight: 600;
+            word-break: break-all;
+        }
+        .contact-box p {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 13px;
+            color: #4a6a8a;
+        }
+        .footer a {
+            color: #40b4ff;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 26px; }
+            .hero { padding: 40px 0 30px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .section h2 { font-size: 19px; }
+            .lang-btn { padding: 5px 14px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Language Bar -->
+    <div class="lang-bar">
+        <div class="container">
+            <button class="lang-btn active" onclick="switchLang('zh')">中文</button>
+            <button class="lang-btn" onclick="switchLang('en')">English</button>
+            <button class="lang-btn" onclick="switchLang('ja')">日本語</button>
+        </div>
+    </div>
+
+    <!-- ====== 中文 ====== -->
+    <div class="container lang-content active" id="lang-zh">
+        <div class="hero">
+            <h1>🎣 鱼隐 · 离线钓场</h1>
+            <div class="subtitle">鱼隐 · 一个人的钓场</div>
+            <div class="tagline">静心垂钓，悠然世界</div>
+            <div class="badge">完全离线 · 零联网</div>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🎮</span> 这是什么游戏？</h2>
+            <p><strong>鱼隐·离线钓场</strong> 是一款完全离线运行的钓鱼收集游戏。你不需要网络连接——不需要 Wi-Fi、不需要蜂窝数据、不需要任何权限。打开 App，即刻开钓。</p>
+            <p>在不同的栖息地抛竿，等待鱼儿上钩，体验真实体感操作带来的沉浸感。收集 96 种鱼类，解锁称号，登上排行榜，享受纯粹的钓鱼乐趣。</p>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🌟</span> 核心特点</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📡</div>
+                    <h3>完全离线</h3>
+                    <p>零网络依赖。无需注册，无需登录，无需 Wi-Fi。你的隐私，你做主。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h3>体感操作</h3>
+                    <p>用陀螺仪真实抛竿！像真的钓鱼一样挥动手机，感受收杆的触觉反馈。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🐟</div>
+                    <h3>96 种鱼类</h3>
+                    <p>遍布 5 个独特栖息地，从亚马逊雨林到深海热泉，每一种鱼都精心绘制。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏆</div>
+                    <h3>称号系统</h3>
+                    <p>从新手到钓神，逐步解锁称号。每条鱼、每个成就都算数。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🛒</div>
+                    <h3>商店 & 排行榜</h3>
+                    <p>购买饵料、升级装备，和你的成绩一起见证成长。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔒</div>
+                    <div class="icon">☁️</div>
+                    <h3>iCloud 同步</h3>
+                    <p>登录 iCloud 后，图鉴、称号、进度自动跨设备同步。Apple CloudKit 加密保护，开发者无法访问你的数据。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🌍</span> 栖息地一览</h2>
+            <ul class="spec-list">
+                <li><span class="dot">🌴</span> <strong>亚马逊雨林</strong> — 热带水域，种类繁多</li>
+                <li><span class="dot">❄️</span> <strong>冰封苔原</strong> — 极寒之地，稀有鱼种</li>
+                <li><span class="dot">🌙</span> <strong>月影湖</strong> — 宁静湖泊，传说之鱼</li>
+                <li><span class="dot">🏝️</span> <strong>珊瑚礁</strong> — 色彩斑斓的海洋世界</li>
+                <li><span class="dot">🌋</span> <strong>深海热泉</strong> — 极端环境，神秘生物</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">📋</span> 详细信息</h2>
+            <ul class="spec-list">
+                <li><span class="dot">📱</span> <strong>平台：</strong> iOS 16.0+</li>
+                <li><span class="dot">💰</span> <strong>价格：</strong> 免费下载（含内购）</li>
+                <li><span class="dot">📶</span> <strong>网络：</strong> 完全离线，无需联网</li>
+                <li><span class="dot">🔋</span> <strong>体感：</strong> 支持 Core Motion 陀螺仪操作</li>
+                <li><span class="dot">🤝</span> <strong>触觉：</strong> 支持 Core Haptics 触觉反馈</li>
+                <li><span class="dot">☁️</span> <strong>云同步：</strong> 登录 iCloud 时通过 CloudKit 自动跨设备同步</li>
+                <li><span class="dot">🗂️</span> <strong>存储：</strong> 本地 Core Data，无需账户</li>
+                <li><span class="dot">📐</span> <strong>大小：</strong> 轻量级应用，安装包小</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">📧</span> 联系我们</h2>
+            <p>如有任何问题、建议或反馈，欢迎随时联系我们：</p>
+            <div class="contact-box">
+                <p>📧 邮件</p>
+                <div class="email">natsukawa.tn@icloud.com</div>
+                <p style="margin-top:12px;font-size:13px;color:#6a8aaa;">我们会在 1-2 个工作日内回复。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== English ====== -->
+    <div class="container lang-content" id="lang-en">
+        <div class="hero">
+            <h1>🎣 YuYin · Offline Fishing</h1>
+            <div class="subtitle">YuYin · Solitary Angler</div>
+            <div class="tagline">Cast your line into a serene world — anytime, anywhere, offline.</div>
+            <div class="badge">100% Offline · Zero Network</div>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🎮</span> What is This Game?</h2>
+            <p><strong>YuYin · Offline Fishing</strong> is a fully offline fishing collection game. No internet required — no Wi-Fi, no cellular data, no permissions needed. Open the app and start fishing immediately.</p>
+            <p>Cast your line across unique habitats, feel the bite with haptic feedback, and reel in your catch with motion controls. Collect 96 species of fish, unlock titles, climb the leaderboard, and enjoy pure, distraction-free fishing.</p>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🌟</span> Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📡</div>
+                    <h3>Fully Offline</h3>
+                    <p>Zero network dependency. No sign-up, no login, no Wi-Fi needed. Your privacy, your control.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h3>Motion Controls</h3>
+                    <p>Cast your rod like the real thing! Swing your device using the built-in gyroscope and feel every vibration.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🐟</div>
+                    <h3>96 Fish Species</h3>
+                    <p>Spread across 5 unique habitats — from the Amazon rainforest to deep-sea volcanic vents. Each fish is beautifully illustrated.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏆</div>
+                    <h3>Title System</h3>
+                    <p>Progress from Novice to Fishing God. Every catch and every achievement counts toward your growth.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🛒</div>
+                    <h3>Shop & Leaderboard</h3>
+                    <p>Buy bait, upgrade gear, and track your progress on the personal leaderboard.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔒</div>
+                    <div class="icon">☁️</div>
+                    <h3>iCloud Sync</h3>
+                    <p>Sign in to iCloud to sync your collection, titles & progress across devices. Backed by CloudKit encryption — developers cannot access your data.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🌍</span> Habitats</h2>
+            <ul class="spec-list">
+                <li><span class="dot">🌴</span> <strong>Amazon Rainforest</strong> — Tropical waters teeming with life</li>
+                <li><span class="dot">❄️</span> <strong>Frozen Tundra</strong> — Frigid waters with rare species</li>
+                <li><span class="dot">🌙</span> <strong>Moonlake</strong> — A peaceful lake said to hold legendary fish</li>
+                <li><span class="dot">🏝️</span> <strong>Ocean Reef</strong> — A vibrant underwater paradise</li>
+                <li><span class="dot">🌋</span> <strong>Volcanic Vent</strong> — Extreme depths with mysterious creatures</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">📋</span> Specs</h2>
+            <ul class="spec-list">
+                <li><span class="dot">📱</span> <strong>Platform:</strong> iOS 16.0+</li>
+                <li><span class="dot">💰</span> <strong>Price:</strong> Free to download (in-app purchases available)</li>
+                <li><span class="dot">📶</span> <strong>Network:</strong> Fully offline, no connection required</li>
+                <li><span class="dot">🔋</span> <strong>Motion:</strong> Core Motion gyroscope support</li>
+                <li><span class="dot">🤝</span> <strong>Haptics:</strong> Core Haptics feedback support</li>
+                <li><span class="dot">☁️</span> <strong>Cloud Sync:</strong> iCloud + CloudKit cross-device sync when signed in</li>
+                <li><span class="dot">🗂️</span> <strong>Storage:</strong> Local Core Data, no account needed</li>
+                <li><span class="dot">📐</span> <strong>Size:</strong> Lightweight, small install footprint</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">📧</span> Contact Us</h2>
+            <p>Questions, feedback, or suggestions? We'd love to hear from you:</p>
+            <div class="contact-box">
+                <p>📧 Email</p>
+                <div class="email">natsukawa.tn@icloud.com</div>
+                <p style="margin-top:12px;font-size:13px;color:#6a8aaa;">We typically respond within 1-2 business days.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== 日本語 ====== -->
+    <div class="container lang-content" id="lang-ja">
+        <div class="hero">
+            <h1>🎣 魚隠 · オフライン釣り場</h1>
+            <div class="subtitle">魚隠 · 一人の釣り場</div>
+            <div class="tagline">静かに竿を振る、自分だけの釣りの世界。</div>
+            <div class="badge">完全オフライン · 通信不要</div>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🎮</span> どんなゲーム？</h2>
+            <p><strong>ユイン · オフライン釣り</strong> は、完全オフラインで動作する釣り収集ゲームです。インターネットは一切不要 — Wi-Fiも、モバイルデータも、許可も必要ありません。アプリを開いて、すぐに釣りを始められます。</p>
+            <p>さまざまな生息地で竿を投げ、魚がかかるのを待ち、リアルなモーション操作で引き上げる没入感を体験してください。96種類の魚を収集し、称号をアンロックし、ランキングで競い合い、純粋な釣りの楽しさをお届けします。</p>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🌟</span> 主な特徴</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📡</div>
+                    <h3>完全オフライン</h3>
+                    <p>ネットワーク不要。登録もログインもWi-Fiも不要。あなたのプライバシーはあなたのものです。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h3>モーション操作</h3>
+                    <p>ジャイロセンサーで本格的な竿さばき！スマホを振ってキャストし、触覚フィードバックを感じよう。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🐟</div>
+                    <h3>96種の魚</h3>
+                    <p>アマゾンから深海熱水域まで、5つのユニークな生息地に生息。すべて丁寧に描かれた魚たち。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏆</div>
+                    <h3>称号システム</h3>
+                    <p>見習いから釣りの神様へ。すべての釣果が成長につながります。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🛒</div>
+                    <h3>ショップ & ランキング</h3>
+                    <p>エサを買い、装備を強化し、自分の記録を確認しよう。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔒</div>
+                    <div class="icon">☁️</div>
+                    <h3>iCloud 同期</h3>
+                    <p>iCloud にサインインすると、図鑑・称号・進行状況をデバイス間で自動同期。CloudKit 暗号化で保護、開発者はデータにアクセスできません。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">🌍</span> 生息地</h2>
+            <ul class="spec-list">
+                <li><span class="dot">🌴</span> <strong>アマゾン熱帯雨林</strong> — 多様な生命が息づく熱帯水域</li>
+                <li><span class="dot">❄️</span> <strong>氷結ツンドラ</strong> — 極寒の地に生息する希少種</li>
+                <li><span class="dot">🌙</span> <strong>月影湖</strong> — 伝説の魚が棲むという静かな湖</li>
+                <li><span class="dot">🏝️</span> <strong>サンゴ礁</strong> — 色とりどりの海中楽園</li>
+                <li><span class="dot">🌋</span> <strong>深海熱水噴出孔</strong> — 過酷な環境に適応した神秘の生物</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">📋</span> 詳細情報</h2>
+            <ul class="spec-list">
+                <li><span class="dot">📱</span> <strong>プラットフォーム：</strong> iOS 16.0+</li>
+                <li><span class="dot">💰</span> <strong>価格：</strong> 無料ダウンロード（アプリ内課金あり）</li>
+                <li><span class="dot">📶</span> <strong>通信：</strong> 完全オフライン、接続不要</li>
+                <li><span class="dot">🔋</span> <strong>モーション：</strong> Core Motion ジャイロ対応</li>
+                <li><span class="dot">🤝</span> <strong>触覚：</strong> Core Haptics フィードバック対応</li>
+                <li><span class="dot">☁️</span> <strong>クラウド同期：</strong> iCloud + CloudKit でデバイス間自動同期（サインイン時）</li>
+                <li><span class="dot">🗂️</span> <strong>保存：</strong> ローカル Core Data、アカウント不要</li>
+                <li><span class="dot">📐</span> <strong>サイズ：</strong> 軽量、インストール容量小</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="emoji">📧</span> お問い合わせ</h2>
+            <p>ご質問、ご意見、ご要望がございましたら、お気軽にご連絡ください：</p>
+            <div class="contact-box">
+                <p>📧 メール</p>
+                <div class="email">natsukawa.tn@icloud.com</div>
+                <p style="margin-top:12px;font-size:13px;color:#6a8aaa;">1〜2営業日以内に返信いたします。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer container">
+        <p id="footerText">© <span id="year"></span> 鱼隐 · 离线钓场 — natsukawa.tn</p>
+        <p style="margin-top:6px;"><a href="privacy.html" id="footerLink">🔒 隐私政策</a></p>
+    </div>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        function switchLang(lang) {
+            document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('lang-' + lang).classList.add('active');
+            document.querySelector('.lang-btn[onclick*="' + lang + '"]').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const titles = {
+                zh: '鱼隐 · 离线钓场 | natsukawa.tn',
+                en: 'YuYin · Offline Fishing | natsukawa.tn',
+                ja: 'ユイン · オフライン釣り | natsukawa.tn'
+            };
+            document.getElementById('pageTitle').textContent = titles[lang];
+
+            const footers = {
+                zh: '© ' + new Date().getFullYear() + ' 鱼隐 · 离线钓场 — natsukawa.tn',
+                en: '© ' + new Date().getFullYear() + ' YuYin · Offline Fishing — natsukawa.tn',
+                ja: '© ' + new Date().getFullYear() + ' 魚隠 · オフライン釣り場 — natsukawa.tn'
+            };
+            document.getElementById('footerText').innerHTML = footers[lang];
+
+            const links = {
+                zh: '🔒 隐私政策',
+                en: '🔒 Privacy Policy',
+                ja: '🔒 プライバシーポリシー'
+            };
+            document.getElementById('footerLink').textContent = links[lang];
+        }
+    </script>
+</body>
+</html>
